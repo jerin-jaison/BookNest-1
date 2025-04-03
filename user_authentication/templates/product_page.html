@@ -1,0 +1,900 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #8B4513;
+        --primary-hover: #6b3410;
+        --light-brown: #f5e6d3;
+        --bg-light: #fafafa;
+        --btn-shadow: rgba(139, 69, 19, 0.2);
+    }
+
+    .toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1100;
+    }
+
+    .toast {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        margin-bottom: 15px;
+        padding: 15px 20px;
+        animation: slideIn 0.3s ease-out;
+        border: none;
+        transition: all 0.3s ease;
+        max-width: 400px;
+        opacity: 1 !important;
+        display: block !important;
+    }
+
+    .toast.success {
+        border-left: 4px solid #28a745;
+    }
+
+    .toast.error {
+        border-left: 4px solid #dc3545;
+    }
+
+    .toast.warning {
+        border-left: 4px solid #ffc107;
+    }
+    
+    .toast-header {
+        background-color: transparent;
+        border-bottom: 1px solid #f0f0f0;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .toast-body {
+        padding: 0;
+    }
+
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    .card {
+        transition: all 0.3s ease;
+        border-radius: 15px;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        position: relative;
+        overflow: visible;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .card-img-top {
+        border-radius: 15px 15px 0 0;
+        transition: transform 0.3s ease;
+        position: relative;
+        z-index: 1;
+    }
+
+    .card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+
+    .category-nav {
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding: 10px 0;
+        margin-bottom: 2rem;
+    }
+
+    .category-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .btn-custom {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 8px 20px;
+        border: none;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px var(--btn-shadow);
+    }
+
+    .btn-custom:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+        color: white;
+        box-shadow: 0 6px 12px var(--btn-shadow);
+    }
+
+    .btn-outline-custom {
+        background-color: transparent;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px var(--btn-shadow);
+    }
+
+    .btn-outline-custom:hover {
+        background-color: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px var(--btn-shadow);
+    }
+
+    .pagination {
+        margin-top: 2rem;
+    }
+
+    .pagination .page-link {
+        color: var(--primary-color);
+        border: none;
+        padding: 10px 15px;
+        margin: 0 5px;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px var(--btn-shadow);
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: var(--primary-color);
+        color: white;
+        box-shadow: 0 4px 6px var(--btn-shadow);
+    }
+
+    .pagination .page-link:hover {
+        background-color: var(--light-brown);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px var(--btn-shadow);
+    }
+
+    .card-title {
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    .price-tag {
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .discount-price {
+        color: #dc3545;
+        font-size: 0.9rem;
+    }
+
+    .star-rating {
+        color: #ffc107;
+    }
+
+    .add-to-cart-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        padding: 8px 20px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px var(--btn-shadow);
+        font-weight: 500;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .add-to-cart-btn:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+        color: white;
+        box-shadow: 0 6px 12px var(--btn-shadow);
+    }
+    
+    .add-to-cart-btn::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.5);
+        opacity: 0;
+        border-radius: 100%;
+        transform: scale(1, 1) translate(-50%, -50%);
+        transform-origin: 50% 50%;
+    }
+    
+    .add-to-cart-btn.animate::after {
+        animation: ripple 1s ease-out;
+    }
+    
+    @keyframes ripple {
+        0% {
+            transform: scale(0, 0);
+            opacity: 0.5;
+        }
+        100% {
+            transform: scale(100, 100);
+            opacity: 0;
+        }
+    }
+
+    .add-to-cart-btn:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .badge-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .badge-warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .badge-info {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    .product-card-body {
+        padding: 1.5rem;
+    }
+
+    .wishlist-icon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        color: #8B4513;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        z-index: 10;
+    }
+
+    .wishlist-icon.filled {
+        color: #8B4513;
+    }
+
+    .wishlist-icon:not(.filled) {
+        color: #d4d4d4;
+    }
+
+    .wishlist-icon:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Toast Container for Messages -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;"></div>
+
+    <!-- Hidden CSRF Token -->
+    {% csrf_token %}
+    
+    <!-- Message Alerts from Django Messages -->
+    {% if messages %}
+    <div class="messages-container mb-4">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Category Navigation -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="category-nav d-flex align-items-center">
+                <a href="{% url 'product_page' %}" 
+                   class="{% if not selected_category %}btn-custom{% else %}btn-outline-custom{% endif %} me-2">
+                    All Books
+                </a>
+                {% for category in categories %}
+                <a href="{% url 'product_page' %}?category={{ category.id }}" 
+                   class="{% if selected_category == category.id|stringformat:'s' %}btn-custom{% else %}btn-outline-custom{% endif %} me-2">
+                    {{ category.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Button -->
+    <div class="position-fixed" style="left: 20px; top: 50%; transform: translateY(-50%); z-index: 1000;">
+        <button class="btn btn-custom rounded-circle shadow d-flex align-items-center justify-content-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas" aria-controls="filterOffcanvas" title="Filter Books" style="width: 50px; height: 50px; box-shadow: 0 4px 10px rgba(139, 69, 19, 0.3);">
+            <i class="fas fa-filter"></i>
+        </button>
+    </div>
+
+    <!-- Filter Offcanvas -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="filterOffcanvas" aria-labelledby="filterOffcanvasLabel" style="max-width: 350px;">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title" id="filterOffcanvasLabel" style="color: var(--primary-color);">
+                <i class="fas fa-filter me-2"></i>Filter Books
+            </h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <form method="GET" action="{% url 'product_page' %}" id="filterForm">
+                <!-- Search -->
+                <div class="mb-4">
+                    <label class="form-label fw-medium">Search</label>
+                    <input type="text" class="form-control" name="search" value="{{ search_query }}" 
+                           placeholder="Search by title, author, or ISBN...">
+                </div>
+
+                <!-- Categories -->
+                <div class="mb-4">
+                    <label class="form-label fw-medium">Category</label>
+                    <select class="form-select" name="category">
+                        <option value="">All Categories</option>
+                        <option value="self-help" {% if selected_category == 'self-help' %}selected{% endif %}>Self-Help</option>
+                        <option value="comics" {% if selected_category == 'comics' %}selected{% endif %}>Comics</option>
+                        <option value="sci-fi" {% if selected_category == 'sci-fi' %}selected{% endif %}>Science Fiction</option>
+                        <option value="fiction" {% if selected_category == 'fiction' %}selected{% endif %}>Fiction</option>
+                        <option value="non-fiction" {% if selected_category == 'non-fiction' %}selected{% endif %}>Non-Fiction</option>
+                        <option value="mystery" {% if selected_category == 'mystery' %}selected{% endif %}>Mystery & Thriller</option>
+                        <option value="romance" {% if selected_category == 'romance' %}selected{% endif %}>Romance</option>
+                        <option value="biography" {% if selected_category == 'biography' %}selected{% endif %}>Biography</option>
+                        {% for category in categories %}
+                            {% if category.id|stringformat:"s" != 'self-help' and category.id|stringformat:"s" != 'comics' and category.id|stringformat:"s" != 'sci-fi' and category.id|stringformat:"s" != 'fiction' and category.id|stringformat:"s" != 'non-fiction' and category.id|stringformat:"s" != 'mystery' and category.id|stringformat:"s" != 'romance' and category.id|stringformat:"s" != 'biography' %}
+                            <option value="{{ category.id }}" {% if category.id|stringformat:"s" == selected_category %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Language -->
+                <div class="mb-4">
+                    <label class="form-label fw-medium">Language</label>
+                    <select class="form-select" name="language">
+                        <option value="">All Languages</option>
+                        
+                        <!-- Most Common -->
+                        <optgroup label="Most Common">
+                            <option value="english" {% if selected_language == 'english' %}selected{% endif %}>English</option>
+                        </optgroup>
+                        
+                        <!-- Indian Languages -->
+                        <optgroup label="Indian Languages">
+                            <option value="tamil" {% if selected_language == 'tamil' %}selected{% endif %}>Tamil</option>
+                            <option value="telugu" {% if selected_language == 'telugu' %}selected{% endif %}>Telugu</option>
+                            <option value="malayalam" {% if selected_language == 'malayalam' %}selected{% endif %}>Malayalam</option>
+                            <option value="hindi" {% if selected_language == 'hindi' %}selected{% endif %}>Hindi</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <!-- Price Range -->
+                <div class="mb-4">
+                    <label class="form-label fw-medium">Price Range</label>
+                    <div class="row g-2">
+                        <div class="col">
+                            <input type="number" class="form-control" name="min_price" value="{{ min_price }}" 
+                                   placeholder="Min" min="0">
+                        </div>
+                        <div class="col">
+                            <input type="number" class="form-control" name="max_price" value="{{ max_price }}" 
+                                   placeholder="Max" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sort By -->
+                <div class="mb-4">
+                    <label class="form-label fw-medium">Sort By</label>
+                    <select class="form-select" name="sort_by">
+                        <option value="title" {% if sort_by == 'title' %}selected{% endif %}>Title (A-Z)</option>
+                        <option value="price_low" {% if sort_by == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="price_high" {% if sort_by == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                        <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Newest First</option>
+                        <option value="discount" {% if sort_by == 'discount' %}selected{% endif %}>Highest Discount</option>
+                    </select>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-custom">
+                        Apply Filters
+                    </button>
+                    <button type="button" class="btn btn-outline-custom" onclick="resetFilters()">
+                        Reset Filters
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- No Products Found Message -->
+    {% if products|length == 0 %}
+    <div class="container my-5 text-center">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm border-0 p-4">
+                    <div class="card-body">
+                        <i class="fas fa-book-reader fa-4x mb-3" style="color: #8B4513;"></i>
+                        <h3 style="font-family: 'Playfair Display', serif; color: #5a3921;">No Books Found</h3>
+                        <p class="text-muted" style="font-family: 'Poppins', sans-serif;">
+                            We couldn't find any books matching your search "{{ search_query }}". 
+                            Please try with a different search term or browse our categories.
+                        </p>
+                        <a href="{% url 'product_page' %}" class="btn btn-outline-primary mt-3" style="font-family: 'Poppins', sans-serif;">
+                            <i class="fas fa-book me-2"></i>Browse All Books
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Products Grid -->
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
+        {% for product in products %}
+        <div class="col">
+            <div class="card h-100">
+                {% if user.is_authenticated %}
+                <div class="wishlist-icon {% if product in user.user_wishlist.all %}filled{% endif %}"
+                     onclick="toggleWishlist(event, {{ product.id }}, this)"
+                     data-product-id="{{ product.id }}">
+                    <i class="fas fa-heart"></i>
+                </div>
+                {% endif %}
+                <a href="{% url 'product_detail' product.slug %}" class="text-decoration-none">
+                    <img src="{{ product.cover_image.url }}" class="card-img-top" alt="{{ product.title }}" 
+                         style="height: 240px; object-fit: contain; padding: 1rem; background-color: var(--light-brown);">
+                </a>
+                <div class="card-body product-card-body">
+                    <h6 class="card-title mb-1">{{ product.title }}</h6>
+                    <p class="text-muted mb-2" style="font-size: 0.9rem;">{{ product.author }}</p>
+                    
+                    <!-- Product Status Badge -->
+                    {% if product.status != 'active' %}
+                    <div class="mb-2">
+                        <span class="status-badge 
+                            {% if product.status == 'inactive' %}badge-danger
+                            {% elif product.status == 'out_of_stock' %}badge-warning
+                            {% elif product.status == 'coming_soon' %}badge-info
+                            {% endif %}">
+                            {% if product.status == 'inactive' %}Inactive
+                            {% elif product.status == 'out_of_stock' %}Out of Stock
+                            {% elif product.status == 'coming_soon' %}Coming Soon
+                            {% endif %}
+                        </span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Star Rating -->
+                    <div class="mb-2">
+                        <div class="d-flex align-items-center">
+                            <div class="star-rating" style="font-size: 0.9rem;">
+                                {% with rating=product_ratings|get_item:product.id|default:0 %}
+                                    {% if rating >= 1 %}
+                                        <i class="fas fa-star"></i>
+                                    {% elif rating >= 0.5 %}
+                                        <i class="fas fa-star-half-alt"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                    
+                                    {% if rating >= 2 %}
+                                        <i class="fas fa-star"></i>
+                                    {% elif rating >= 1.5 %}
+                                        <i class="fas fa-star-half-alt"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                    
+                                    {% if rating >= 3 %}
+                                        <i class="fas fa-star"></i>
+                                    {% elif rating >= 2.5 %}
+                                        <i class="fas fa-star-half-alt"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                    
+                                    {% if rating >= 4 %}
+                                        <i class="fas fa-star"></i>
+                                    {% elif rating >= 3.5 %}
+                                        <i class="fas fa-star-half-alt"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                    
+                                    {% if rating >= 5 %}
+                                        <i class="fas fa-star"></i>
+                                    {% elif rating >= 4.5 %}
+                                        <i class="fas fa-star-half-alt"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                            <span class="text-muted ms-2" style="font-size: 0.8rem;">
+                                ({{ product_ratings|get_item:product.id|default:"0.0" }}) 
+                                {% with review_count=product_review_counts|get_item:product.id|default:0 %}
+                                    {% if review_count > 0 %}
+                                        {{ review_count }} review{{ review_count|pluralize }}
+                                    {% else %}
+                                        No reviews
+                                    {% endif %}
+                                {% endwith %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="d-flex align-items-center mb-3">
+                        {% if product.get_best_offer %}
+                            {% with best_offer=product.get_best_offer %}
+                                {% if best_offer.is_valid %}
+                                    <span class="price-tag me-2">₹{{ product.get_offer_price }}</span>
+                                    <span class="text-decoration-line-through discount-price">₹{{ product.price }}</span>
+                                    <span class="badge bg-danger ms-2">{{ best_offer.discount_percentage }}% off</span>
+                                {% elif product.discount_price %}
+                                    <span class="price-tag me-2">₹{{ product.discount_price }}</span>
+                                    <span class="text-decoration-line-through discount-price">₹{{ product.price }}</span>
+                                {% else %}
+                                    <span class="price-tag">₹{{ product.price }}</span>
+                                {% endif %}
+                            {% endwith %}
+                        {% elif product.discount_price %}
+                            <span class="price-tag me-2">₹{{ product.discount_price }}</span>
+                            <span class="text-decoration-line-through discount-price">₹{{ product.price }}</span>
+                        {% else %}
+                            <span class="price-tag">₹{{ product.price }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Add to Cart Button -->
+                    {% if product.stock > 0 %}
+                    <button type="button" class="add-to-cart-btn w-100" 
+                            data-product-id="{{ product.id }}"
+                            data-product-title="{{ product.title }}">
+                        <i class="fas fa-cart-plus me-1"></i> Add to Cart
+                    </button>
+                    <!-- Non-JavaScript fallback form (hidden) -->
+                    <form action="{% url 'cart_section:add_to_cart' product_id=product.id %}" method="POST" class="d-none">
+                        {% csrf_token %}
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn btn-primary w-100">Add to Cart</button>
+                    </form>
+                    {% else %}
+                    <button class="add-to-cart-btn w-100" disabled>
+                        <i class="fas fa-times me-1"></i> Out of Stock
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <div class="row">
+        <div class="col-12 d-flex justify-content-center">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {% if products.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ products.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}" aria-label="Previous">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in products.paginator.page_range %}
+                    <li class="page-item {% if products.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}">{{ num }}</a>
+                    </li>
+                    {% endfor %}
+
+                    {% if products.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ products.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}" aria-label="Next">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize toast container
+    if (!document.querySelector('.toast-container')) {
+        const toastContainer = document.createElement('div');
+        toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+        toastContainer.style.zIndex = '1100';
+        document.body.appendChild(toastContainer);
+    }
+
+    // Check if there are any Django messages that should be displayed as toasts
+    {% if messages %}
+        {% for message in messages %}
+            showToast(
+                '{{ message.tags|title }}', 
+                `<div class="d-flex align-items-center">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle text-success{% elif message.tags == 'error' %}exclamation-circle text-danger{% elif message.tags == 'warning' %}exclamation-triangle text-warning{% else %}info-circle text-info{% endif %} me-2" style="font-size: 1.5rem;"></i>
+                    <div>{{ message }}</div>
+                </div>`,
+                '{{ message.tags }}'
+            );
+        {% endfor %}
+    {% endif %}
+
+    // Add click event listeners to all add-to-cart buttons
+    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.dataset.productId;
+            const productTitle = this.dataset.productTitle;
+            const btn = this;
+            
+            // Add ripple animation
+            btn.classList.add('animate');
+            setTimeout(() => {
+                btn.classList.remove('animate');
+            }, 1000);
+            
+            // Disable button and show loading state
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Adding...';
+            
+            try {
+                const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+                if (!csrfToken) {
+                    showToast(
+                        'Error',
+                        `<div class="d-flex align-items-center">
+                            <i class="fas fa-exclamation-circle text-danger me-2" style="font-size: 1.5rem;"></i>
+                            <div>CSRF token not found. Please refresh the page and try again.</div>
+                        </div>`,
+                        'error'
+                    );
+                    return;
+                }
+
+                fetch("{% url 'cart_section:add_to_cart' product_id=0 %}".replace('0', productId), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: 'quantity=1',
+                    credentials: 'same-origin'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Show success message
+                        showToast(
+                            'Added to Cart',
+                            `<div class="d-flex align-items-start">
+                                <i class="fas fa-check-circle text-success me-2" style="font-size: 1.5rem;"></i>
+                                <div>
+                                    <div class="mb-2 fw-bold">${productTitle}</div>
+                                    <p class="mb-2">${data.message}</p>
+                                    <div class="d-flex gap-2">
+                                        <a href="{% url 'cart_section:view_cart' %}" class="btn btn-sm btn-primary">View Cart</a>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="this.closest('.toast').remove()">Continue Shopping</button>
+                                    </div>
+                                </div>
+                            </div>`,
+                            'success'
+                        );
+                        
+                        // Update cart badge
+                        const cartBadge = document.querySelector('.cart-badge');
+                        if (cartBadge) {
+                            cartBadge.textContent = data.cart_count;
+                        } else {
+                            const cartIcon = document.querySelector('a[href="{% url 'cart_section:view_cart' %}"]');
+                            if (cartIcon) {
+                                const badge = document.createElement('span');
+                                badge.className = 'cart-badge';
+                                badge.textContent = data.cart_count;
+                                cartIcon.appendChild(badge);
+                            }
+                        }
+
+                        // Update wishlist icon if it exists
+                        const wishlistIcon = document.querySelector(`.wishlist-icon[data-product-id="${productId}"]`);
+                        if (wishlistIcon && wishlistIcon.classList.contains('filled')) {
+                            wishlistIcon.classList.remove('filled');
+                        }
+                    } else {
+                        showToast(
+                            'Error',
+                            `<div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-circle text-danger me-2" style="font-size: 1.5rem;"></i>
+                                <div>${data.message || 'Could not add item to cart. Please try again.'}</div>
+                            </div>`,
+                            'error'
+                        );
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast(
+                        'Error',
+                        `<div class="d-flex align-items-center">
+                            <i class="fas fa-exclamation-circle text-danger me-2" style="font-size: 1.5rem;"></i>
+                            <div>Could not add item to cart. Please try again later.</div>
+                        </div>`,
+                        'error'
+                    );
+                })
+                .finally(() => {
+                    // Reset button state
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-cart-plus me-1"></i> Add to Cart';
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                showToast(
+                    'Error',
+                    `<div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-circle text-danger me-2" style="font-size: 1.5rem;"></i>
+                        <div>An unexpected error occurred. Please try again.</div>
+                    </div>`,
+                    'error'
+                );
+                // Reset button state
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-cart-plus me-1"></i> Add to Cart';
+            }
+        });
+    });
+});
+
+function showToast(title, message, type = 'success') {
+    const toastContainer = document.querySelector('.toast-container');
+    if (!toastContainer) {
+        console.error('Toast container not found!');
+        return;
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type} show`;
+    toast.style.opacity = '1';
+    toast.style.minWidth = '350px';
+    toast.style.zIndex = '9999';
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
+    toast.setAttribute('aria-atomic', 'true');
+    
+    // Create a unique ID for the toast
+    const toastId = 'toast-' + Date.now();
+    toast.id = toastId;
+    
+    toast.innerHTML = `
+        <div class="toast-header d-flex justify-content-between align-items-center">
+            <strong class="me-auto">${title}</strong>
+            <button type="button" class="btn-close" onclick="document.getElementById('${toastId}').remove()"></button>
+        </div>
+        <div class="toast-body">${message}</div>
+    `;
+    
+    toastContainer.appendChild(toast);
+    
+    // Only auto-dismiss non-cart-related toasts
+    if (title !== 'Added to Cart') {
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (document.getElementById(toastId)) {
+                    document.getElementById(toastId).remove();
+                }
+            }, 300);
+        }, 5000);
+    }
+    
+    // Log that toast has been created (for debugging)
+    console.log('Toast notification created:', title, type);
+}
+
+function toggleWishlist(event, productId, icon) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    fetch(`{% url 'user_profile:toggle_wishlist' product_id=0 %}`.replace('0', productId), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            icon.classList.toggle('filled');
+            showToast(
+                'Wishlist',
+                data.message,
+                'success'
+            );
+        } else {
+            showToast(
+                'Error',
+                data.message || 'Could not update wishlist. Please try again.',
+                'error'
+            );
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast(
+            'Error',
+            'Could not update wishlist. Please try again later.',
+            'error'
+        );
+    });
+}
+
+function resetFilters() {
+    const form = document.getElementById('filterForm');
+    const inputs = form.querySelectorAll('input, select');
+    inputs.forEach(input => {
+        if (input.type === 'text' || input.type === 'number') {
+            input.value = '';
+        } else if (input.type === 'select-one') {
+            input.selectedIndex = 0;
+        }
+    });
+    form.submit();
+}
+</script>
+{% endblock %}
