@@ -1,0 +1,10 @@
+django==5.0.2
+social-auth-app-django==5.4.0
+python-dotenv==1.0.0
+psycopg2-binary==2.9.9
+Pillow==10.2.0
+razorpay==1.4.1
+xhtml2pdf==0.2.13
+django-crispy-forms==2.1
+crispy-bootstrap5==2023.10
+django-environ==0.11.2 
