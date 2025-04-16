@@ -34,6 +34,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '13.233.255.183', 'www.booknest.fun', 'booknest.fun']  
 # ALLOWED_HOSTS = ['*']
 
+
 # Application definition
 
 INSTALLED_APPS = [ 
