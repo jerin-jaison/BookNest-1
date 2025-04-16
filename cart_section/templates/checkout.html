@@ -1417,25 +1417,49 @@ $(document).ready(function() {
                     
                     try {
                         if (typeof Swal !== 'undefined') {
+                            // Check for specific error messages
+                            let errorTitle = 'Order Placement Failed';
+                            let errorMessage = data.message || 'There was an error processing your order. Please try again.';
+                            
+                            // Check if the error is related to stock constraint
+                            if (data.message && data.message.includes('stock_check')) {
+                                errorTitle = 'Product Out of Stock';
+                                errorMessage = 'We apologize, but one or more items in your cart are no longer in stock. Please return to your cart to review your items.';
+                            } else if (data.message && data.message.includes('stock')) {
+                                errorTitle = 'Stock Issue';
+                                errorMessage = 'Some items in your cart are no longer available in the requested quantity. Please review your cart and try again.';
+                            }
+                            
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Order Placement Failed',
-                                text: data.message || 'There was an error processing your order. Please try again.',
-                                confirmButtonColor: '#8B4513'
+                                title: errorTitle,
+                                text: errorMessage,
+                                confirmButtonColor: '#8B4513',
+                                confirmButtonText: 'Return to Cart',
+                                showCancelButton: true,
+                                cancelButtonText: 'Stay Here'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // Redirect to cart page if user clicks "Return to Cart"
+                                    window.location.href = '{% url "cart_section:view_cart" %}';
+                                }
                             });
                         } else {
-                            alert(data.message || 'There was an error processing your order. Please try again.');
+                            // Fallback for when SweetAlert is not available
+                            let errorMessage = 'Some items in your cart are no longer available. Please review your cart and try again.';
+                            if (confirm(errorMessage + '\n\nWould you like to return to your cart?')) {
+                                window.location.href = '{% url "cart_section:view_cart" %}';
+                            }
                         }
                     } catch (e) {
                         console.error("Error showing notification:", e);
-                        alert(data.message || 'There was an error processing your order. Please try again.');
-                        }
-                    } else {
-                    // Unexpected response
+                        alert('Some items in your cart are no longer available. Please review your cart and try again.');
+                    }
+                } else {
+                    // ... rest of the existing code ...
                     submitBtn.innerHTML = originalBtnText;
                     submitBtn.disabled = false;
                     
-                    console.error("Unexpected response:", data);
                     try {
                         if (typeof Swal !== 'undefined') {
                         Swal.fire({

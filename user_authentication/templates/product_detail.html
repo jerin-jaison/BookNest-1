@@ -123,6 +123,14 @@
                 console.log('Response:', response);
                 console.log('Response status:', response.status);
                 console.log('Response headers:', [...response.headers.entries()]);
+                
+                // Check for login redirect by examining content type
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.includes("text/html")) {
+                    // This is likely a redirect to the login page
+                    throw new Error("login_required");
+                }
+                
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -182,6 +190,26 @@
             .catch(error => {
                 console.error('Fetch error:', error);
                 console.error('Error stack:', error.stack);
+                
+                // Handle login required error
+                if (error.message === "login_required") {
+                    showToast(
+                        'Login Required',
+                        `<div class="d-flex align-items-start">
+                            <i class="fas fa-user-lock text-warning me-2" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <p class="mb-2">Please log in to add items to your cart.</p>
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'login_page' %}?next={{ request.path }}" class="btn btn-sm btn-primary">Login Now</a>
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="this.closest('.toast').remove()">Continue Shopping</button>
+                                </div>
+                            </div>
+                        </div>`,
+                        'warning'
+                    );
+                    return;
+                }
+                
                 showToast(
                     'Error',
                     `<div class="d-flex align-items-center">
@@ -244,7 +272,19 @@
                 },
                 body: `quantity=${quantity}`
             })
-            .then(response => response.json())
+            .then(response => {
+                // Check for login redirect by examining content type
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.includes("text/html")) {
+                    // This is likely a redirect to the login page
+                    throw new Error("login_required");
+                }
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.status === 'success') {
                     window.location.href = data.redirect_url;
@@ -265,6 +305,30 @@
             .catch(error => {
                 console.error('Fetch error:', error);
                 console.error('Error stack:', error.stack);
+                
+                // Re-enable the button
+                buyNowBtn.disabled = false;
+                buyNowBtn.innerHTML = originalBtnText;
+                
+                // Handle login required error
+                if (error.message === "login_required") {
+                    showToast(
+                        'Login Required',
+                        `<div class="d-flex align-items-start">
+                            <i class="fas fa-user-lock text-warning me-2" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <p class="mb-2">Please log in to complete your purchase.</p>
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'login_page' %}?next={{ request.path }}" class="btn btn-sm btn-primary">Login Now</a>
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="this.closest('.toast').remove()">Continue Shopping</button>
+                                </div>
+                            </div>
+                        </div>`,
+                        'warning'
+                    );
+                    return;
+                }
+                
                 showToast(
                     'Error',
                     `<div class="d-flex align-items-center">
@@ -273,9 +337,6 @@
                     </div>`,
                     'error'
                 );
-                // Re-enable the button
-                buyNowBtn.disabled = false;
-                buyNowBtn.innerHTML = originalBtnText;
             });
         } catch (error) {
             console.error('JavaScript error:', error);
