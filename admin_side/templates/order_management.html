@@ -348,10 +348,10 @@
                                         <i class="bi bi-eye"></i> View
                                     </button>
                                     {% if order.return_requested and order.status != 'RETURNED' %}
-                                    <button class="btn btn-sm btn-outline" 
+<!--                                     <button class="btn btn-sm btn-outline" 
                                             onclick="processReturn('{{ order.order_id }}')">
                                         <i class="bi bi-arrow-return-left"></i> Return
-                                    </button>
+                                    </button> -->
                                     {% elif order.status == 'RETURNED' %}
                                     <span class="badge bg-success">Return Processed</span>
                                     {% endif %}
