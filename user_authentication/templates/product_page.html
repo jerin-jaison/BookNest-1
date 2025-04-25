@@ -365,20 +365,10 @@
                     <label class="form-label fw-medium">Category</label>
                     <select class="form-select" name="category">
                         <option value="">All Categories</option>
-                        <option value="self-help" {% if selected_category == 'self-help' %}selected{% endif %}>Self-Help</option>
-                        <option value="comics" {% if selected_category == 'comics' %}selected{% endif %}>Comics</option>
-                        <option value="sci-fi" {% if selected_category == 'sci-fi' %}selected{% endif %}>Science Fiction</option>
-                        <option value="fiction" {% if selected_category == 'fiction' %}selected{% endif %}>Fiction</option>
-                        <option value="non-fiction" {% if selected_category == 'non-fiction' %}selected{% endif %}>Non-Fiction</option>
-                        <option value="mystery" {% if selected_category == 'mystery' %}selected{% endif %}>Mystery & Thriller</option>
-                        <option value="romance" {% if selected_category == 'romance' %}selected{% endif %}>Romance</option>
-                        <option value="biography" {% if selected_category == 'biography' %}selected{% endif %}>Biography</option>
                         {% for category in categories %}
-                            {% if category.id|stringformat:"s" != 'self-help' and category.id|stringformat:"s" != 'comics' and category.id|stringformat:"s" != 'sci-fi' and category.id|stringformat:"s" != 'fiction' and category.id|stringformat:"s" != 'non-fiction' and category.id|stringformat:"s" != 'mystery' and category.id|stringformat:"s" != 'romance' and category.id|stringformat:"s" != 'biography' %}
-                            <option value="{{ category.id }}" {% if category.id|stringformat:"s" == selected_category %}selected{% endif %}>
-                                {{ category.name }}
-                            </option>
-                            {% endif %}
+                        <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
                         {% endfor %}
                     </select>
                 </div>
@@ -588,7 +578,8 @@
                     {% if product.stock > 0 %}
                     <button type="button" class="add-to-cart-btn w-100" 
                             data-product-id="{{ product.id }}"
-                            data-product-title="{{ product.title }}">
+                            data-product-title="{{ product.title }}"
+                            {% if not user.is_authenticated %}data-needs-login="true"{% endif %}>
                         <i class="fas fa-cart-plus me-1"></i> Add to Cart
                     </button>
                     <!-- Non-JavaScript fallback form (hidden) -->
@@ -672,6 +663,7 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             const productId = this.dataset.productId;
             const productTitle = this.dataset.productTitle;
+            const needsLogin = this.dataset.needsLogin === 'true';
             const btn = this;
             
             // Add ripple animation
@@ -679,6 +671,25 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 btn.classList.remove('animate');
             }, 1000);
+            
+            // Check if user needs to login
+            if (needsLogin) {
+                showToast(
+                    'Login Required',
+                    `<div class="d-flex align-items-start">
+                        <i class="fas fa-user-lock text-warning me-2" style="font-size: 1.5rem;"></i>
+                        <div>
+                            <p class="mb-2">Please login to add items to your cart.</p>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'login_page' %}?next={{ request.path }}" class="btn btn-sm btn-primary">Login</a>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="this.closest('.toast').remove()">Continue Shopping</button>
+                            </div>
+                        </div>
+                    </div>`,
+                    'warning'
+                );
+                return;
+            }
             
             // Disable button and show loading state
             btn.disabled = true;

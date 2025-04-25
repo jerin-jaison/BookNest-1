@@ -389,16 +389,54 @@
         const searchTerm = orderSearch.value.toLowerCase();
         const statusTerm = statusFilter.value.toLowerCase();
         const orders = ordersList.getElementsByClassName('order-card');
+        
+        let visibleCount = 0;
 
         Array.from(orders).forEach(order => {
             const orderId = order.querySelector('.order-id').textContent.toLowerCase();
-            const status = order.querySelector('.order-status').textContent.toLowerCase();
+            const statusElement = order.querySelector('.status-badge');
+            const status = statusElement ? statusElement.textContent.trim().toLowerCase() : '';
             
+            // Check if order matches search term and status filter
             const matchesSearch = orderId.includes(searchTerm);
-            const matchesStatus = !statusTerm || status === statusTerm;
+            const matchesStatus = !statusTerm || status.includes(statusTerm);
             
-            order.style.display = matchesSearch && matchesStatus ? 'block' : 'none';
+            if (matchesSearch && matchesStatus) {
+                order.style.display = 'block';
+                visibleCount++;
+            } else {
+                order.style.display = 'none';
+            }
         });
+        
+        // Check if any orders are visible after filtering
+        let noResultsMessage = document.getElementById('noFilterResults');
+        
+        if (visibleCount === 0) {
+            // If no orders match and we don't already have a message displayed
+            if (!noResultsMessage) {
+                noResultsMessage = document.createElement('div');
+                noResultsMessage.id = 'noFilterResults';
+                noResultsMessage.className = 'no-orders';
+                noResultsMessage.innerHTML = `
+                    <i class="bi bi-search" style="font-size: 3rem; display: block; margin-bottom: 15px;"></i>
+                    <p>No orders match your current filter criteria.</p>
+                    <button class="btn btn-outline-secondary mt-3" onclick="resetFilters()">
+                        <i class="bi bi-arrow-counterclockwise me-2"></i>Reset Filters
+                    </button>
+                `;
+                ordersList.appendChild(noResultsMessage);
+            }
+        } else if (noResultsMessage) {
+            // If we have visible orders but the message is displayed, remove it
+            noResultsMessage.remove();
+        }
+    }
+
+    function resetFilters() {
+        orderSearch.value = '';
+        statusFilter.value = '';
+        filterOrders();
     }
 
     orderSearch.addEventListener('input', filterOrders);

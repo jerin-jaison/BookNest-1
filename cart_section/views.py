@@ -985,15 +985,39 @@ def add_to_cart(request, product_id):
             
             # Remove from wishlist if exists (both models)
             try:
-                # Remove from user_profile wishlist
-                ProfileWishlist.objects.filter(user=request.user, product=product).delete()
-                WishlistItem.objects.filter(user=request.user, product=product).delete()
+                # First, let's import the models we need here directly
+                from user_profile.models import WishlistItem, Wishlist as ProfileWishlist
+                from user_authentication.models import Wishlist as AuthWishlist
+
+                # Log what we're trying to do for debugging
+                print(f"Attempting to remove product {product.id} ({product.title}) from {request.user.username}'s wishlist")
                 
-                # Remove from user_authentication wishlist
-                AuthWishlist.objects.filter(user=request.user, product=product).delete()
+                # Check if items exist before deleting
+                profile_wishlist_items = WishlistItem.objects.filter(user=request.user, product=product)
+                profile_wishlist_count = profile_wishlist_items.count()
+                
+                profile_old_wishlist_items = ProfileWishlist.objects.filter(user=request.user, product=product)
+                profile_old_count = profile_old_wishlist_items.count()
+                
+                auth_wishlist_items = AuthWishlist.objects.filter(user=request.user, product=product)
+                auth_count = auth_wishlist_items.count()
+                
+                print(f"Found wishlist items: WishlistItem: {profile_wishlist_count}, ProfileWishlist: {profile_old_count}, AuthWishlist: {auth_count}")
+                
+                # Delete from all wishlist models
+                profile_deleted, _ = WishlistItem.objects.filter(user=request.user, product=product).delete()
+                profile_old_deleted, _ = ProfileWishlist.objects.filter(user=request.user, product=product).delete()
+                auth_deleted, _ = AuthWishlist.objects.filter(user=request.user, product=product).delete()
+                
+                print(f"Deleted wishlist items: WishlistItem: {profile_deleted}, ProfileWishlist: {profile_old_deleted}, AuthWishlist: {auth_deleted}")
+                
             except Exception as e:
+                # Print detailed error for debugging
+                import traceback
                 print(f"Error removing from wishlist: {str(e)}")
-                pass  # Ignore if Wishlist model doesn't exist or any other error
+                print(f"Traceback: {traceback.format_exc()}")
+                # Don't re-raise the exception - just log it
+                pass  # Continue execution
         
         cart_count = Cart.objects.filter(user=request.user).count()
         
