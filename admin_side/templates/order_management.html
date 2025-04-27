@@ -38,6 +38,7 @@
     .badge.bg-shipped { background-color: #cce5ff !important; color: #004085; }
     .badge.bg-delivered { background-color: #d4edda !important; color: #155724; }
     .badge.bg-cancelled { background-color: #f8d7da !important; color: #721c24; }
+    .badge.bg-confirmed { background-color: #d0f0fd !important; color: #055160; }
     .badge.bg-return-pending { background-color: #e2e3e5 !important; color: #383d41; }
     .badge.bg-return-approved { background-color: #d1ecf1 !important; color: #0c5460; }
     .badge.bg-return-rejected { background-color: #f8d7da !important; color: #721c24; }
@@ -316,7 +317,7 @@
                                 <div class="dropdown">
                                     <button id="status-badge-{{ order.order_id }}" class="badge bg-{{ order.status|lower }} dropdown-toggle border-0" 
                                             type="button" data-bs-toggle="dropdown"
-                                            {% if order.status == 'CANCELLED' %}disabled{% endif %}>
+                                            {% if order.status == 'CANCELLED' or order.status == 'DELIVERED' %}disabled{% endif %}>
                                         {% if order.return_requested and order.status != 'RETURNED' %}
                                             Return Requested
                                         {% elif order.status == 'RETURN_REJECTED' %}
@@ -325,7 +326,7 @@
                                             {{ order.status }}
                                         {% endif %}
                                     </button>
-                                    {% if order.status != 'CANCELLED' %}
+                                    {% if order.status != 'CANCELLED' and order.status != 'DELIVERED' %}
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" href="#" 
                                             onclick="updateStatus('{{ order.order_id }}', 'pending')">Pending</a></li>
@@ -347,8 +348,8 @@
                                             onclick="viewOrderDetails('{{ order.order_id }}')">
                                         <i class="bi bi-eye"></i> View
                                     </button>
-<!--                                     {% if order.return_requested and order.status != 'RETURNED' %}
-                                   <button class="btn btn-sm btn-outline" 
+                                    <!-- {% if order.return_requested and order.status != 'RETURNED' %}
+                                    <button class="btn btn-sm btn-outline" 
                                             onclick="processReturn('{{ order.order_id }}')">
                                         <i class="bi bi-arrow-return-left"></i> Return
                                     </button>
@@ -528,9 +529,14 @@
             }
         }
         
-        // Prevent status changes for cancelled orders
+        // Prevent status changes for cancelled or delivered orders
         if (currentStatus === 'CANCELLED') {
             alert('Cannot change status of orders that have been cancelled by the user.');
+            return;
+        }
+        
+        if (currentStatus === 'DELIVERED') {
+            alert('Cannot change status of orders that have been marked as delivered.');
             return;
         }
         
