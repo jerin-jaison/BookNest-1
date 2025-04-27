@@ -104,9 +104,9 @@
                         <a href="{% url 'user_profile:orders_list' %}" class="btn action-btn primary-btn">
                             <i class="fas fa-shopping-bag me-2"></i> View Your Orders
                         </a>
-                        <a href="{% url 'cart_section:checkout' %}" class="btn action-btn secondary-btn">
+                        {% comment %} <a href="{% url 'cart_section:checkout' %}" class="btn action-btn secondary-btn">
                             <i class="fas fa-credit-card me-2"></i> Try Again
-                        </a>
+                        </a> {% endcomment %}
                     </div>
                 </div>
             </div>
