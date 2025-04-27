@@ -90,49 +90,21 @@
         text-decoration: line-through;
         font-size: 0.9rem;
     }
-    
-    .toast-container {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1000;
-    }
-    
-    .toast {
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        margin-bottom: 10px;
-        padding: 15px 20px;
-        animation: slideIn 0.3s ease-out;
-    }
-    
-    .toast.success {
-        border-left: 4px solid #28a745;
-    }
-    
-    .toast.error {
-        border-left: 4px solid #dc3545;
-    }
-    
-    @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
 </style>
 
+<!-- Include Toastr CSS and JS files -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 <div class="container py-5">
-    <!-- Toast Container for Messages -->
-    <div class="toast-container"></div>
-    
+    {% if wishlist_items %}
     <div class="row">
         <div class="col-12">
             <h2 class="mb-4">My Wishlist</h2>
         </div>
     </div>
-
-    {% if wishlist_items %}
-    <div class="row">
+    <div class="row" id="wishlist-items-container">
         {% for item in wishlist_items %}
         <div class="col-md-3 mb-4">
             <div class="card book-card h-100 border-0 position-relative" data-product-id="{{ item.product.id }}">
@@ -185,7 +157,7 @@
         {% endfor %}
     </div>
     {% else %}
-    <div class="text-center py-5">
+    <div class="text-center py-5" id="empty-wishlist">
         <p class="text-muted mb-4">Your wishlist is empty</p>
         <a href="{% url 'product_page' %}" class="btn-custom">Continue Shopping</a>
     </div>
@@ -196,6 +168,17 @@
 {% csrf_token %}
 
 <script>
+    // Initialize Toastr
+    toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "timeOut": "3000",
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "extendedTimeOut": "1000"
+    };
+
     // Remove from wishlist
     document.querySelectorAll('.remove-from-wishlist').forEach(button => {
         button.addEventListener('click', function(event) {
@@ -206,28 +189,7 @@
             const productId = this.dataset.productId;
             const card = this.closest('.col-md-3');
             
-            fetch(`{% url 'user_profile:toggle_wishlist' product_id=0 %}`.replace('0', productId), {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken'),
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    card.remove();
-                    // If no more items, reload page to show empty state
-                    if (document.querySelectorAll('.book-card').length === 0) {
-                        location.reload();
-                    }
-                    showToast('Success', data.message, 'success');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showToast('Error', 'Could not remove item from wishlist', 'error');
-            });
+            removeProductFromWishlist(productId, card);
         });
     });
 
@@ -237,52 +199,149 @@
         event.preventDefault();
         event.stopPropagation();
         
+        console.log(`Adding product ID ${productId} to cart...`);
+        
+        // Disable the button to prevent multiple clicks
+        const button = event.currentTarget;
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Adding...';
+        
         const csrfToken = getCookie('csrftoken');
         const card = document.querySelector(`.book-card[data-product-id="${productId}"]`).closest('.col-md-3');
         
-        fetch("{% url 'cart_section:add_to_cart' product_id=0 %}".replace('0', productId), {
+        // First, try to remove from wishlist
+        fetch(`{% url 'user_profile:toggle_wishlist' product_id=0 %}`.replace('0', productId), {
             method: 'POST',
             headers: {
+                'X-CSRFToken': csrfToken,
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': csrfToken
-            },
-            body: 'quantity=1',
-            credentials: 'same-origin'
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(wishlistData => {
+            console.log('Wishlist removal response:', wishlistData);
+            
+            // Now add to cart after wishlist item is removed
+            return fetch("{% url 'cart_section:add_to_cart' product_id=0 %}".replace('0', productId), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: 'quantity=1',
+                credentials: 'same-origin'
+            });
         })
         .then(response => response.json())
         .then(data => {
+            console.log('Add to cart response:', data);
+            
+            // Enable the button again in case of error
+            button.disabled = false;
+            button.innerHTML = '<i class="fas fa-cart-plus me-1"></i> Add to Cart';
+            
             if (data.status === 'success') {
-                showToast('Added to Cart', `${productTitle} has been added to your cart.`, 'success');
+                toastr.success(`${productTitle} has been added to your cart.`);
                 
                 // Update cart badge
-                const cartBadge = document.querySelector('.cart-badge');
-                if (cartBadge) {
-                    cartBadge.textContent = data.cart_count;
-                } else {
-                    const cartIcon = document.querySelector('.cart-icon');
-                    if (cartIcon) {
-                        const badge = document.createElement('span');
-                        badge.className = 'cart-badge';
-                        badge.textContent = data.cart_count;
-                        cartIcon.parentElement.appendChild(badge);
-                    }
-                }
+                updateCartBadge(data.cart_count);
 
-                // Remove the product card from wishlist
+                // Remove the item from the UI
                 card.remove();
                 
-                // If no more items, reload page to show empty state
-                if (document.querySelectorAll('.book-card').length === 0) {
-                    location.reload();
-                }
+                // Check if wishlist is empty
+                checkEmptyWishlist();
             } else {
-                showToast('Error', data.message || 'Could not add item to cart', 'error');
+                // Display specific error messages
+                if (data.message.includes('out of stock')) {
+                    toastr.error(data.message);
+                } else if (data.message.includes('Maximum allowed')) {
+                    toastr.warning(data.message);
+                } else if (data.message.includes('not available')) {
+                    toastr.error(data.message);
+                } else {
+                    toastr.error(data.message || 'Could not add item to cart');
+                }
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            showToast('Error', 'Could not add item to cart', 'error');
+            // Enable the button again in case of error
+            button.disabled = false;
+            button.innerHTML = '<i class="fas fa-cart-plus me-1"></i> Add to Cart';
+            
+            console.error('Error processing cart/wishlist operations:', error);
+            toastr.error('Could not complete the operation. Please try again.');
         });
+    }
+
+    // Function to remove product from wishlist
+    function removeProductFromWishlist(productId, card) {
+        console.log(`Removing product ID ${productId} from wishlist...`);
+        
+        fetch(`{% url 'user_profile:toggle_wishlist' product_id=0 %}`.replace('0', productId), {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Remove from wishlist response:', data);
+            if (data.status === 'success') {
+                // Remove the card from the UI
+                card.remove();
+                toastr.info('Item has been removed from your wishlist.');
+                
+                // Check if wishlist is empty and show empty state
+                checkEmptyWishlist();
+            } else {
+                toastr.error('Could not remove from wishlist');
+            }
+        })
+        .catch(error => {
+            console.error('Error removing from wishlist:', error);
+            toastr.error('Could not remove from wishlist');
+        });
+    }
+
+    // Update cart badge count
+    function updateCartBadge(count) {
+        const cartBadge = document.querySelector('.cart-badge');
+        if (cartBadge) {
+            cartBadge.textContent = count;
+        } else {
+            const cartIcon = document.querySelector('.cart-icon');
+            if (cartIcon) {
+                const badge = document.createElement('span');
+                badge.className = 'cart-badge';
+                badge.textContent = count;
+                cartIcon.parentElement.appendChild(badge);
+            }
+        }
+    }
+
+    // Check if wishlist is empty and show empty state if needed
+    function checkEmptyWishlist() {
+        const wishlistItems = document.querySelectorAll('.book-card');
+        console.log(`Checking if wishlist is empty. Items count: ${wishlistItems.length}`);
+        
+        if (wishlistItems.length === 0) {
+            console.log('Wishlist is empty, showing empty state');
+            const wishlistContainer = document.getElementById('wishlist-items-container');
+            if (wishlistContainer) {
+                const container = wishlistContainer.parentNode;
+                container.innerHTML = `
+                    <div class="text-center py-5" id="empty-wishlist">
+                        <p class="text-muted mb-4">Your wishlist is empty</p>
+                        <a href="{% url 'product_page' %}" class="btn-custom">Continue Shopping</a>
+                    </div>
+                `;
+            }
+        }
     }
 
     // Get CSRF token
@@ -300,27 +359,8 @@
         }
         return cookieValue;
     }
-    
-    // Show toast notification
-    function showToast(title, message, type = 'success') {
-        const toastContainer = document.querySelector('.toast-container');
-        
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        toast.innerHTML = `
-            <div class="toast-header">
-                <strong class="me-auto">${title}</strong>
-            </div>
-            <div class="toast-body">${message}</div>
-        `;
-        
-        toastContainer.appendChild(toast);
-        
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateX(100%)';
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
-    }
+
+    // Log that script has loaded
+    console.log('Wishlist page script loaded successfully');
 </script>
 {% endblock %} 
