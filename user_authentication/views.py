@@ -51,6 +51,31 @@ def signup_view(request):
         # Check if the request is AJAX
         is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
 
+        # Password validation
+        if len(password) < 8:
+            if is_ajax:
+                return JsonResponse({'status': 'error', 'message': 'Password must be at least 8 characters long'})
+            messages.error(request, 'Password must be at least 8 characters long')
+            return redirect('signup_page')
+
+        if not any(c.isupper() for c in password):
+            if is_ajax:
+                return JsonResponse({'status': 'error', 'message': 'Password must contain at least one uppercase letter'})
+            messages.error(request, 'Password must contain at least one uppercase letter')
+            return redirect('signup_page')
+
+        if not any(c.islower() for c in password):
+            if is_ajax:
+                return JsonResponse({'status': 'error', 'message': 'Password must contain at least one lowercase letter'})
+            messages.error(request, 'Password must contain at least one lowercase letter')
+            return redirect('signup_page')
+
+        if not any(c.isdigit() for c in password):
+            if is_ajax:
+                return JsonResponse({'status': 'error', 'message': 'Password must contain at least one number'})
+            messages.error(request, 'Password must contain at least one number')
+            return redirect('signup_page')
+
         # Validate user input before creating user
         if User.objects.filter(username=username).exists():
             if is_ajax:
