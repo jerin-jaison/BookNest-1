@@ -110,42 +110,81 @@ class Product(models.Model):
         return base_price
         
     def get_best_offer(self):
-        """Returns the best offer applicable to this product"""
-        from django.utils import timezone
-        now = timezone.now()
-        
-        # Get all valid product offers
-        product_offers = self.offers.filter(
+    """Returns the best offer applicable to this product"""
+    from django.utils import timezone
+    now = timezone.now()
+    
+    # Get all valid product offers
+    product_offers = self.offers.filter(
+        is_active=True,
+        start_date__lte=now,
+        end_date__gte=now
+    ).order_by('-discount_percentage')
+    
+    # Initialize category_offers as None (not as empty list)
+    category_offers = None
+    
+    # Get all valid category offers if category exists
+    if self.category:
+        category_offers = self.category.offers.filter(
             is_active=True,
             start_date__lte=now,
             end_date__gte=now
         ).order_by('-discount_percentage')
+    
+    best_offer = None
+    best_discount = 0
+    
+    # Check product offers
+    if product_offers.exists():
+        best_offer = product_offers.first()
+        best_discount = best_offer.discount_percentage
         
-        # Get all valid category offers
-        category_offers = []
-        if self.category:
-            category_offers = self.category.offers.filter(
-                is_active=True,
-                start_date__lte=now,
-                end_date__gte=now
-            ).order_by('-discount_percentage')
-        
-        best_offer = None
-        best_discount = 0
-        
-        # Check product offers
-        if product_offers.exists():
-            best_offer = product_offers.first()
-            best_discount = best_offer.discount_percentage
+    # Check if any category offer is better
+    if category_offers and category_offers.exists():  # First check if not None, then exists
+        category_offer = category_offers.first()
+        if best_offer is None or category_offer.discount_percentage > best_discount:
+            best_offer = category_offer
+            best_discount = category_offer.discount_percentage
             
-        # Check if any category offer is better
-        if category_offers.exists():
-            category_offer = category_offers.first()
-            if best_offer is None or category_offer.discount_percentage > best_discount:
-                best_offer = category_offer
-                best_discount = category_offer.discount_percentage
+    return best_offer
+    # def get_best_offer(self):
+    #     """Returns the best offer applicable to this product"""
+    #     from django.utils import timezone
+    #     now = timezone.now()
+        
+    #     # Get all valid product offers
+    #     product_offers = self.offers.filter(
+    #         is_active=True,
+    #         start_date__lte=now,
+    #         end_date__gte=now
+    #     ).order_by('-discount_percentage')
+        
+    #     # Get all valid category offers
+    #     category_offers = []
+    #     if self.category:
+    #         category_offers = self.category.offers.filter(
+    #             is_active=True,
+    #             start_date__lte=now,
+    #             end_date__gte=now
+    #         ).order_by('-discount_percentage')
+        
+    #     best_offer = None
+    #     best_discount = 0
+        
+    #     # Check product offers
+    #     if product_offers.exists():
+    #         best_offer = product_offers.first()
+    #         best_discount = best_offer.discount_percentage
+            
+    #     # Check if any category offer is better
+    #     if category_offers.exists():
+    #         category_offer = category_offers.first()
+    #         if best_offer is None or category_offer.discount_percentage > best_discount:
+    #             best_offer = category_offer
+    #             best_discount = category_offer.discount_percentage
                 
-        return best_offer
+    #     return best_offer
     
     def get_offer_price(self):
         """Calculate the price after applying the best offer"""
