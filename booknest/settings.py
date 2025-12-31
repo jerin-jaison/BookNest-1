@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'user_wallet',
     'cart_section.apps.CartSectionConfig',
     'online_payment',
+    'booknest.apps.BooknestConfig',
 ]
 
 # Message settings
