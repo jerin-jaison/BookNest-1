@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     'cart_section.apps.CartSectionConfig',
     'online_payment',
     'booknest.apps.BooknestConfig',
+    "cloudinary",
+    "cloudinary_storage",
 ]
 
 # Message settings
@@ -156,6 +158,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
