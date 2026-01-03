@@ -131,11 +131,19 @@
                                 <div class="mb-3">
                                     <label class="form-label">Cover Image</label>
                                     <div class="d-flex flex-column align-items-center p-3 border rounded">
-                                        {% if product.cover_image %}
+                                        <!-- {% if product.cover_image %}
                                         <img src="{{ product.cover_image.url }}" alt="Book Cover" class="preview-image mb-3">
                                         {% else %}
                                         <img src="https://via.placeholder.com/150x200?text=No+Image" alt="Default Cover" class="preview-image mb-3">
-                                        {% endif %}
+                                        {% endif %} -->
+                                        {% with product.additional_images.first as img %}
+                                            {% if img %}
+                                                <img src="{{ img.image.url }}" alt="Book Cover" class="preview-image mb-3">
+                                            {% else %}
+                                                <img src="https://via.placeholder.com/150x200?text=No+Image" alt="Default Cover" class="preview-image mb-3">
+                                            {% endif %}
+                                        {% endwith %}
+
                                         <input type="file" class="form-control" id="coverImage" name="cover_image" accept="image/jpeg, image/png, image/gif">
                                         <small class="text-muted mt-2">Accepted formats: JPEG, PNG, GIF (Max: 5MB)</small>
                                     </div>
