@@ -355,8 +355,7 @@ def admin_customers_view(request):
 
     return render(request, 'customer_management.html', {'users':users, 'search_query':search_query})
 
-#Block User
-
+# Block User
 @login_required(login_url='admin_side:admin_login')
 def admin_blockUser_view(request, user_id):
     # Verify admin permission
@@ -367,6 +366,16 @@ def admin_blockUser_view(request, user_id):
     # Get user or return 404
     user = get_object_or_404(User, id=user_id)
     
+    # Prevent blocking admin users
+    if user.is_superuser or user.is_staff:
+        messages.error(request, f'Cannot block admin user {user.username}')
+        return redirect('admin_side:customer_management')
+    
+    # Prevent blocking yourself (extra safety)
+    if user.id == request.user.id:
+        messages.error(request, 'You cannot block yourself')
+        return redirect('admin_side:customer_management')
+    
     # Set user as inactive (blocked)
     user.is_active = False
     user.save()
@@ -374,10 +383,9 @@ def admin_blockUser_view(request, user_id):
     messages.success(request, f'User {user.username} has been blocked')
     return redirect('admin_side:customer_management')
 
-#Unblock User
 
+# Unblock User
 @login_required(login_url='admin_side:admin_login')
-
 def admin_unblockUser_view(request, user_id):
     # Verify admin permission
     if not request.user.is_superuser:
@@ -387,12 +395,18 @@ def admin_unblockUser_view(request, user_id):
     # Get user or return 404
     user = get_object_or_404(User, id=user_id)
     
-    # Set user as inactive (blocked)
+    # Prevent unblocking admin users (they shouldn't be blocked anyway)
+    if user.is_superuser or user.is_staff:
+        messages.error(request, f'{user.username} is an admin user')
+        return redirect('admin_side:customer_management')
+    
+    # Set user as active (unblocked)
     user.is_active = True
     user.save()
     
     messages.success(request, f'User {user.username} has been unblocked')
     return redirect('admin_side:customer_management')
+
 
 
 #Product Edit
