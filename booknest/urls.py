@@ -13,7 +13,7 @@ Class-based views
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-
+"""
 
 from django.urls import path, include
 from django.conf import settings
@@ -71,22 +71,22 @@ urlpatterns += [
     path('media/<path:path>', case_insensitive_serve, {'document_root': settings.MEDIA_ROOT}),
     path('static/<path:path>', case_insensitive_serve, {'document_root': settings.STATIC_ROOT or os.path.join(settings.BASE_DIR, 'static')}),
 ]
-"""
-from django.contrib import admin
-from django.urls import path, include
-from django.conf.urls import handler404
-from user_authentication.views import custom_404_view
 
-handler404 = custom_404_view
+# from django.contrib import admin
+# from django.urls import path, include
+# from django.conf.urls import handler404
+# from user_authentication.views import custom_404_view
 
-urlpatterns = [
-    path('admin/', admin.site.urls),  
-    path('', include('user_authentication.urls')),
-    path('admin_side/', include('admin_side.urls')),
-    path('user_profile/', include('user_profile.urls', namespace='user_profile')),
-    path('cart_section/', include('cart_section.urls')),
-    path('wallet/', include('user_wallet.urls')),
-    path('payment/', include('online_payment.urls')),
-    path('social-auth/', include('social_django.urls', namespace='social')),
-]
+# handler404 = custom_404_view
+
+# urlpatterns = [
+#     path('admin/', admin.site.urls),  
+#     path('', include('user_authentication.urls')),
+#     path('admin_side/', include('admin_side.urls')),
+#     path('user_profile/', include('user_profile.urls', namespace='user_profile')),
+#     path('cart_section/', include('cart_section.urls')),
+#     path('wallet/', include('user_wallet.urls')),
+#     path('payment/', include('online_payment.urls')),
+#     path('social-auth/', include('social_django.urls', namespace='social')),
+# ]
 
