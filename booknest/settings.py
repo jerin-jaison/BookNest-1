@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Cloudinary (MUST be in this order)
+    'cloudinary_storage',
+    'cloudinary',
     #myapps
     'user_authentication',
     'social_django',
@@ -53,8 +56,6 @@ INSTALLED_APPS = [
     'cart_section.apps.CartSectionConfig',
     'online_payment',
     'booknest.apps.BooknestConfig',
-    "cloudinary",
-    "cloudinary_storage",
 ]
 
 # Message settings
