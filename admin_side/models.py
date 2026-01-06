@@ -1,6 +1,7 @@
 # models.py
 from django.db import models
 from django.contrib.auth.models import User
+from cloudinary.models import CloudinaryField
 from django.utils.text import slugify
 
 class Customer(models.Model):
@@ -180,9 +181,35 @@ class Product(models.Model):
             'final_price': self.get_offer_price()
         }
 
+# class ProductImage(models.Model):
+#     product = models.ForeignKey(Product, related_name='additional_images', on_delete=models.CASCADE)
+#     image = models.ImageField(upload_to='books/additional/')
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return f"Image for {self.product.title}"
+
+#Claude
+class Product(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.CharField(max_length=200)
+    # Change this line:
+    cover_image = CloudinaryField('image', blank=True, null=True, folder='books/covers')
+    # If you want to keep ImageField, that's fine too - Cloudinary works with both
+    
+    def get_display_image(self):
+        """Returns the best available image URL"""
+        if self.cover_image:
+            return self.cover_image.url
+        first_additional = self.additional_images.first()
+        if first_additional:
+            return first_additional.image.url
+        return "https://via.placeholder.com/300x400?text=No+Image"
+
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name='additional_images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='books/additional/')
+    # Change this line too:
+    image = CloudinaryField('image', folder='books/additional')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
