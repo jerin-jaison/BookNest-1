@@ -186,8 +186,8 @@ class ProductImage(models.Model):
     image = models.ImageField(upload_to='books/additional/')
     created_at = models.DateTimeField(auto_now_add=True)
 
-#     def __str__(self):
-#         return f"Image for {self.product.title}"
+    def __str__(self):
+        return f"Image for {self.product.title}"
 
 #Claude
 # class Product(models.Model):
