@@ -23,6 +23,11 @@ from django.contrib.auth.decorators import user_passes_test
 from user_wallet.views import deduct_referral_reward
 from decimal import Decimal
 
+import logging
+
+# Initialize logger for this module
+logger = logging.getLogger(__name__)
+
 def validate_image_file(image):
     # Check if file is an image
     if not image:
@@ -379,6 +384,8 @@ def admin_blockUser_view(request, user_id):
     # Set user as inactive (blocked)
     user.is_active = False
     user.save()
+
+    
     
     messages.success(request, f'User {user.username} has been blocked')
     return redirect('admin_side:customer_management')

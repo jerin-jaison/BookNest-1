@@ -1,38 +1,44 @@
 from django.db import migrations, models
+from django.utils.text import slugify
+
+
+def populate_slugs(apps, schema_editor):
+    Product = apps.get_model('admin_side', 'Product')
+    for product in Product.objects.all():
+        if not product.slug:
+            base = slugify(product.title)[:180]
+            slug = base
+            num = 1
+            while Product.objects.filter(slug=slug).exclude(pk=product.pk).exists():
+                slug = f"{base}-{num}"
+                num += 1
+            product.slug = slug
+            product.save(update_fields=['slug'])
+
+
+def reverse_populate(apps, schema_editor):
+    Product = apps.get_model('admin_side', 'Product')
+    for product in Product.objects.all():
+        product.slug = None
+        product.save(update_fields=['slug'])
+
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('admin_side_product', '0015_previous_migration'),  # REPLACE THIS
+        ('admin_side', '0014_remove_product_category_remove_product_created_at_and_more'),
     ]
 
     operations = [
-        migrations.RunSQL(
-            sql="""
-                DO $$ 
-                BEGIN
-                    IF NOT EXISTS (
-                        SELECT 1 FROM information_schema.columns 
-                        WHERE table_name='admin_side_product_product' 
-                        AND column_name='slug'
-                    ) THEN
-                        ALTER TABLE admin_side_product_product 
-                        ADD COLUMN slug VARCHAR(200) DEFAULT '';
-                        
-                        -- Generate slugs for existing products
-                        UPDATE admin_side_product_product 
-                        SET slug = LOWER(REGEXP_REPLACE(
-                            REGEXP_REPLACE(title, '[^a-zA-Z0-9\\s-]', '', 'g'), 
-                            '\\s+', '-', 'g'
-                        )) || '-' || id
-                        WHERE slug = '' OR slug IS NULL;
-                        
-                        -- Create unique index
-                        CREATE UNIQUE INDEX admin_side_product_product_slug_idx 
-                        ON admin_side_product_product(slug);
-                    END IF;
-                END $$;
-            """,
-            reverse_sql="ALTER TABLE admin_side_product_product DROP COLUMN IF EXISTS slug;"
+        migrations.AddField(
+            model_name='product',
+            name='slug',
+            field=models.SlugField(max_length=200, blank=True, null=True),
+        ),
+        migrations.RunPython(populate_slugs, reverse_populate),
+        migrations.AlterField(
+            model_name='product',
+            name='slug',
+            field=models.SlugField(max_length=200, unique=True),
         ),
     ]

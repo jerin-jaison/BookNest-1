@@ -74,7 +74,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     discount_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     stock = models.PositiveIntegerField(default=0)
-    cover_image = models.ImageField(upload_to='books/covers/')
+    cover_image = CloudinaryField('image', blank=True, null=True, folder='books/covers')
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='products')
     publish_year = models.PositiveIntegerField(null=True, blank=True)
     language = models.CharField(max_length=20, choices=LANGUAGE_CHOICES, default='english')
@@ -183,7 +183,7 @@ class Product(models.Model):
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name='additional_images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='books/additional/')
+    image = CloudinaryField('image', blank=True, null=True, folder='books/additional')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
