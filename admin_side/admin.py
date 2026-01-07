@@ -1,40 +1,69 @@
 from django.contrib import admin
-from django.contrib.admin.sites import AlreadyRegistered
 from .models import (
-	Customer, Category, Product, ProductImage, ProductOffer,
-	CategoryOffer, ReferralOffer, ReferralCode, ReferralHistory,
-	Coupon, CouponUsage, Review
+    Customer, Category, Product, ProductImage, 
+    ProductOffer, CategoryOffer, ReferralCode, 
+    ReferralOffer, ReferralHistory, Coupon, CouponUsage,
+    Review
 )
 
+# Only register models that are not already registered
+try:
+    admin.site.register(Customer)
+except admin.sites.AlreadyRegistered:
+    pass
 
-class ProductAdmin(admin.ModelAdmin):
-	list_display = ('title', 'author', 'price', 'stock', 'status')
-	prepopulated_fields = {'slug': ('title',)}
+try:
+    admin.site.register(Category)
+except admin.sites.AlreadyRegistered:
+    pass
 
+try:
+    admin.site.register(Product)
+except admin.sites.AlreadyRegistered:
+    pass
 
-class CategoryAdmin(admin.ModelAdmin):
-	list_display = ('name', 'is_active')
+try:
+    admin.site.register(ProductImage)
+except admin.sites.AlreadyRegistered:
+    pass
 
+try:
+    admin.site.register(ProductOffer)
+except admin.sites.AlreadyRegistered:
+    pass
 
-def safe_register(model, admin_class=None):
-	try:
-		if admin_class:
-			admin.site.register(model, admin_class)
-		else:
-			admin.site.register(model)
-	except AlreadyRegistered:
-		pass
+try:
+    admin.site.register(CategoryOffer)
+except admin.sites.AlreadyRegistered:
+    pass
 
+try:
+    admin.site.register(ReferralCode)
+except admin.sites.AlreadyRegistered:
+    pass
 
-safe_register(Product, ProductAdmin)
-safe_register(Category, CategoryAdmin)
-safe_register(ProductImage)
-safe_register(ProductOffer)
-safe_register(CategoryOffer)
-safe_register(ReferralOffer)
-safe_register(ReferralCode)
-safe_register(ReferralHistory)
-safe_register(Coupon)
-safe_register(CouponUsage)
-safe_register(Review)
-safe_register(Customer)
+try:
+    admin.site.register(ReferralOffer)
+except admin.sites.AlreadyRegistered:
+    pass
+
+try:
+    admin.site.register(ReferralHistory)
+except admin.sites.AlreadyRegistered:
+    pass
+
+try:
+    admin.site.register(Coupon)
+except admin.sites.AlreadyRegistered:
+    pass
+
+try:
+    admin.site.register(CouponUsage)
+except admin.sites.AlreadyRegistered:
+    pass
+
+# Register the new Review model
+try:
+    admin.site.register(Review)
+except admin.sites.AlreadyRegistered:
+    pass

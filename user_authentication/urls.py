@@ -22,7 +22,8 @@ urlpatterns = [
 
     # Google Authentication URLs
     path('google/login/', views.google_login, name='google_login'),
-    path('social-auth/', include('social_django.urls', namespace='social')),
+    # Social auth URL is included at project level in booknest.urls
+    # path('social-auth/', include('social_django.urls', namespace='social')),
     # path('google/callback/', views.google_callback, name='google_callback'),
 
 

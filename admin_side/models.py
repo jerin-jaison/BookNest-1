@@ -80,8 +80,8 @@ class Product(models.Model):
     language = models.CharField(max_length=20, choices=LANGUAGE_CHOICES, default='english')
     page_count = models.PositiveIntegerField(null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
