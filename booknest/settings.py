@@ -30,8 +30,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = False
-DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1')
+DEBUG = True
+# DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1')
 
 
 # ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '13.233.255.183', 'www.booknest.fun', 'booknest.fun']  
