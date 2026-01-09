@@ -19,7 +19,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=100)),
-                ('slug', models.SlugField(max_length=100, unique=True)),
                 ('description', models.TextField(blank=True, null=True)),
             ],
         ),
@@ -37,7 +36,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=200)),
-                ('slug', models.SlugField(blank=True, unique=True)),
                 ('author', models.CharField(max_length=100)),
                 ('isbn', models.CharField(blank=True, max_length=13, null=True, unique=True)),
                 ('description', models.TextField()),

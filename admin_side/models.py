@@ -13,7 +13,7 @@ class Customer(models.Model):
     
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True, null=True)
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
@@ -66,7 +66,7 @@ class Product(models.Model):
     )
 
     title = models.TextField()
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(unique=True, blank=True, null=True)
     author = models.TextField()
     isbn = models.CharField(max_length=13, unique=True, blank=True, null=True)
     description = models.TextField()
