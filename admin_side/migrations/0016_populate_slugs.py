@@ -18,7 +18,7 @@ def populate_slugs(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('admin_side', '0018_product_description'),
+        ('admin_side', '0019_product_category_schema_restore'),
     ]
 
     operations = [
