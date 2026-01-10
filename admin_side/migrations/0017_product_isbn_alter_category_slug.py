@@ -5,6 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
+    dependencies = [
         ('admin_side', '0014_category_slug_product_slug'),
     ]
 
