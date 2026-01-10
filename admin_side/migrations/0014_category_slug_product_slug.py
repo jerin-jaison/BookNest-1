@@ -10,11 +10,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='category',
-            name='slug',
-            field=models.SlugField(max_length=100, null=True, unique=True),
-        ),
+
         migrations.AddField(
             model_name='product',
             name='slug',
