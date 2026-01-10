@@ -122,7 +122,7 @@ class Product(models.Model):
         ).order_by('-discount_percentage')
         
         # Get all valid category offers
-        category_offers = []
+        category_offers = None
         if self.category:
             category_offers = self.category.offers.filter(
                 is_active=True,
@@ -139,7 +139,7 @@ class Product(models.Model):
             best_discount = best_offer.discount_percentage
             
         # Check if any category offer is better
-        if category_offers.exists():
+        if category_offers is not None and category_offers.exists():
             category_offer = category_offers.first()
             if best_offer is None or category_offer.discount_percentage > best_discount:
                 best_offer = category_offer
