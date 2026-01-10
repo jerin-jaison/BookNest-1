@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('admin_side', '0016_populate_slugs'),
+        ('admin_side', '0017_product_isbn_alter_category_slug'),
     ]
 
     operations = [
