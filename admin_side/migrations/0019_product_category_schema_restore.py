@@ -12,57 +12,111 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='product',
-            name='category',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='products', to='admin_side.category'),
-        ),
-        migrations.AddField(
-            model_name='product',
-            name='cover_image',
-            field=models.ImageField(default='books/covers/default.jpg', upload_to='books/covers/'),
-            preserve_default=False,
-        ),
-        migrations.AddField(
-            model_name='product',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
-            preserve_default=False,
-        ),
-        migrations.AddField(
-            model_name='product',
-            name='discount_price',
-            field=models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True),
-        ),
-        migrations.AddField(
-            model_name='product',
-            name='page_count',
-            field=models.PositiveIntegerField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='product',
-            name='price',
-            field=models.DecimalField(decimal_places=2, default=0.00, max_digits=10),
-            preserve_default=False,
-        ),
-        migrations.AddField(
-            model_name='product',
-            name='publish_year',
-            field=models.PositiveIntegerField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='product',
-            name='status',
-            field=models.CharField(choices=[('active', 'Active'), ('inactive', 'Inactive'), ('out_of_stock', 'Out of Stock'), ('coming_soon', 'Coming Soon')], default='active', max_length=20),
-        ),
-        migrations.AddField(
-            model_name='product',
-            name='stock',
-            field=models.PositiveIntegerField(default=0),
-        ),
-        migrations.AddField(
-            model_name='product',
-            name='updated_at',
-            field=models.DateTimeField(auto_now=True),
+        migrations.SeparateDatabaseAndState(
+            state_operations=[
+                migrations.AddField(
+                    model_name='product',
+                    name='category',
+                    field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='products', to='admin_side.category'),
+                ),
+                migrations.AddField(
+                    model_name='product',
+                    name='cover_image',
+                    field=models.ImageField(default='books/covers/default.jpg', upload_to='books/covers/'),
+                    preserve_default=False,
+                ),
+                migrations.AddField(
+                    model_name='product',
+                    name='created_at',
+                    field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
+                    preserve_default=False,
+                ),
+                migrations.AddField(
+                    model_name='product',
+                    name='discount_price',
+                    field=models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True),
+                ),
+                migrations.AddField(
+                    model_name='product',
+                    name='page_count',
+                    field=models.PositiveIntegerField(blank=True, null=True),
+                ),
+                migrations.AddField(
+                    model_name='product',
+                    name='price',
+                    field=models.DecimalField(decimal_places=2, default=0.00, max_digits=10),
+                    preserve_default=False,
+                ),
+                migrations.AddField(
+                    model_name='product',
+                    name='publish_year',
+                    field=models.PositiveIntegerField(blank=True, null=True),
+                ),
+                migrations.AddField(
+                    model_name='product',
+                    name='status',
+                    field=models.CharField(choices=[('active', 'Active'), ('inactive', 'Inactive'), ('out_of_stock', 'Out of Stock'), ('coming_soon', 'Coming Soon')], default='active', max_length=20),
+                ),
+                migrations.AddField(
+                    model_name='product',
+                    name='stock',
+                    field=models.PositiveIntegerField(default=0),
+                ),
+                migrations.AddField(
+                    model_name='product',
+                    name='updated_at',
+                    field=models.DateTimeField(auto_now=True),
+                ),
+            ],
+            database_operations=[
+                migrations.AddField(
+                    model_name='product',
+                    name='category',
+                    field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='products', to='admin_side.category'),
+                ),
+                # cover_image excluded from database operations as it already exists
+                migrations.AddField(
+                    model_name='product',
+                    name='created_at',
+                    field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
+                    preserve_default=False,
+                ),
+                migrations.AddField(
+                    model_name='product',
+                    name='discount_price',
+                    field=models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True),
+                ),
+                migrations.AddField(
+                    model_name='product',
+                    name='page_count',
+                    field=models.PositiveIntegerField(blank=True, null=True),
+                ),
+                migrations.AddField(
+                    model_name='product',
+                    name='price',
+                    field=models.DecimalField(decimal_places=2, default=0.00, max_digits=10),
+                    preserve_default=False,
+                ),
+                migrations.AddField(
+                    model_name='product',
+                    name='publish_year',
+                    field=models.PositiveIntegerField(blank=True, null=True),
+                ),
+                migrations.AddField(
+                    model_name='product',
+                    name='status',
+                    field=models.CharField(choices=[('active', 'Active'), ('inactive', 'Inactive'), ('out_of_stock', 'Out of Stock'), ('coming_soon', 'Coming Soon')], default='active', max_length=20),
+                ),
+                migrations.AddField(
+                    model_name='product',
+                    name='stock',
+                    field=models.PositiveIntegerField(default=0),
+                ),
+                migrations.AddField(
+                    model_name='product',
+                    name='updated_at',
+                    field=models.DateTimeField(auto_now=True),
+                ),
+            ],
         ),
     ]
