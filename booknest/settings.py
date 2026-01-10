@@ -264,14 +264,37 @@ STORAGES = {
     },
 }
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
-}
+# Cloudinary Config
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
-CLOUDINARY = {
-    'cloud_name': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    'api_key': os.environ.get('CLOUDINARY_API_KEY'),
-    'api_secret': os.environ.get('CLOUDINARY_API_SECRET'),
-}
+# Check for individual credentials
+CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_CLOUD_NAME')
+CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY')
+CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET')
+
+if CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET:
+    # Configure SDK
+    cloudinary.config(
+        cloud_name=CLOUDINARY_CLOUD_NAME,
+        api_key=CLOUDINARY_API_KEY,
+        api_secret=CLOUDINARY_API_SECRET
+    )
+    # Configure Django Storage
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': CLOUDINARY_CLOUD_NAME,
+        'API_KEY': CLOUDINARY_API_KEY,
+        'API_SECRET': CLOUDINARY_API_SECRET,
+    }
+    CLOUDINARY = {
+        'cloud_name': CLOUDINARY_CLOUD_NAME,
+        'api_key': CLOUDINARY_API_KEY,
+        'api_secret': CLOUDINARY_API_SECRET,
+    }
+else:
+    # If individual keys are missing, we might be relying on CLOUDINARY_URL
+    # which the SDK picks up automatically. 
+    # But django-cloudinary-storage needs CLOUDINARY_STORAGE.
+    # We can try to assume it's set or let it fail if nothing is set.
+    pass
