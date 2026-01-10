@@ -17,6 +17,7 @@ def populate_slugs(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
+    dependencies = [
         ('admin_side', '0017_product_isbn_alter_category_slug'),
     ]
 
