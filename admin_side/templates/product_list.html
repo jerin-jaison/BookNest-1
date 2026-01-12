@@ -200,7 +200,8 @@
                     <select class="form-select" name="category">
                         <option value="">All Categories</option>
                         {% for category in categories %}
-                        <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
+                        <option value="{{ category.id }}" {% if selected_category==category.id|stringformat:"s"
+                            %}selected{% endif %}>
                             {{ category.name }}
                         </option>
                         {% endfor %}
