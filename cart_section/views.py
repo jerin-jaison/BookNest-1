@@ -911,9 +911,12 @@ def place_order(request):
         print(traceback.format_exc())
         return JsonResponse({'status': 'error', 'message': f'An error occurred: {str(e)}'})
 
-@login_required(login_url='login_page')
 @require_http_methods(["POST"])
 def add_to_cart(request, product_id):
+    if not request.user.is_authenticated:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'status': 'error', 'message': 'Please login to continue'})
+        return redirect(f"{reverse('login_page')}?next={request.META.get('HTTP_REFERER', '/')}")
     try:
         product = get_object_or_404(Product, id=product_id)
         quantity = int(request.POST.get('quantity', 1))
@@ -1163,8 +1166,11 @@ def remove_from_cart(request, cart_item_id):
 def order_placed(request):
     return render(request, 'order_placed.html')
 
-@login_required(login_url='login_page')
 def buy_now(request, product_id):
+    if not request.user.is_authenticated:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'status': 'error', 'message': 'Please login to continue'})
+        return redirect(f"{reverse('login_page')}?next={request.META.get('HTTP_REFERER', '/')}")
     try:
         product = get_object_or_404(Product, id=product_id)
         quantity = int(request.POST.get('quantity', 1))
