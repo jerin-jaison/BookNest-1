@@ -15,14 +15,14 @@
         background-color: white;
         padding: 1.5rem;
         border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         margin-bottom: 1.5rem;
     }
 
     .card {
         border: none;
         border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         height: calc(100vh - 180px);
         margin: 0;
     }
@@ -141,7 +141,7 @@
         margin-top: 0.25rem;
     }
 
-    .was-validated .form-control:invalid~.invalid-feedback {
+    .was-validated .form-control:invalid ~ .invalid-feedback {
         display: block;
     }
 
@@ -174,15 +174,13 @@
 
     <!-- Filter Button -->
     {% comment %} <div class="position-fixed" style="left: 20px; top: 50%; transform: translateY(-50%); z-index: 1000;">
-        <button class="btn btn-dark btn-lg rounded-circle shadow" type="button" data-bs-toggle="offcanvas"
-            data-bs-target="#filterOffcanvas" aria-controls="filterOffcanvas" title="Filter Products">
+        <button class="btn btn-dark btn-lg rounded-circle shadow" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas" aria-controls="filterOffcanvas" title="Filter Products">
             <i class="fas fa-filter"></i>
         </button>
     </div> {% endcomment %}
 
     <!-- Filter Offcanvas -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="filterOffcanvas" aria-labelledby="filterOffcanvasLabel"
-        style="max-width: 350px;">
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="filterOffcanvas" aria-labelledby="filterOffcanvasLabel" style="max-width: 350px;">
         <div class="offcanvas-header border-bottom">
             <h5 class="offcanvas-title" id="filterOffcanvasLabel">
                 <i class="fas fa-filter me-2"></i>Filter Products
@@ -194,8 +192,8 @@
                 <!-- Search -->
                 <div class="mb-4">
                     <label class="form-label fw-medium">Search</label>
-                    <input type="text" class="form-control" name="search" value="{{ search_query }}"
-                        placeholder="Search by title, author, or ISBN...">
+                    <input type="text" class="form-control" name="search" value="{{ search_query }}" 
+                           placeholder="Search by title, author, or ISBN...">
                 </div>
 
                 <!-- Categories -->
@@ -204,8 +202,7 @@
                     <select class="form-select" name="category">
                         <option value="">All Categories</option>
                         {% for category in categories %}
-                        <option value="{{ category.id }}" {% if selected_category==category.id|stringformat:"s"
-                            %}selected{% endif %}>
+                        <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
                             {{ category.name }}
                         </option>
                         {% endfor %}
@@ -217,13 +214,10 @@
                     <label class="form-label fw-medium">Status</label>
                     <select class="form-select" name="status">
                         <option value="">All Statuses</option>
-                        <option value="active" {% if selected_status=='active' %}selected{% endif %}>Active</option>
-                        <option value="inactive" {% if selected_status=='inactive' %}selected{% endif %}>Inactive
-                        </option>
-                        <option value="out_of_stock" {% if selected_status=='out_of_stock' %}selected{% endif %}>Out of
-                            Stock</option>
-                        <option value="coming_soon" {% if selected_status=='coming_soon' %}selected{% endif %}>Coming
-                            Soon</option>
+                        <option value="active" {% if selected_status == 'active' %}selected{% endif %}>Active</option>
+                        <option value="inactive" {% if selected_status == 'inactive' %}selected{% endif %}>Inactive</option>
+                        <option value="out_of_stock" {% if selected_status == 'out_of_stock' %}selected{% endif %}>Out of Stock</option>
+                        <option value="coming_soon" {% if selected_status == 'coming_soon' %}selected{% endif %}>Coming Soon</option>
                     </select>
                 </div>
 
@@ -232,12 +226,12 @@
                     <label class="form-label fw-medium">Price Range</label>
                     <div class="row g-2">
                         <div class="col">
-                            <input type="number" class="form-control" name="min_price" value="{{ min_price }}"
-                                placeholder="Min" min="0">
+                            <input type="number" class="form-control" name="min_price" value="{{ min_price }}" 
+                                   placeholder="Min" min="0">
                         </div>
                         <div class="col">
-                            <input type="number" class="form-control" name="max_price" value="{{ max_price }}"
-                                placeholder="Max" min="0">
+                            <input type="number" class="form-control" name="max_price" value="{{ max_price }}" 
+                                   placeholder="Max" min="0">
                         </div>
                     </div>
                 </div>
@@ -246,14 +240,11 @@
                 <div class="mb-4">
                     <label class="form-label fw-medium">Sort By</label>
                     <select class="form-select" name="sort_by">
-                        <option value="title" {% if sort_by=='title' %}selected{% endif %}>Title (A-Z)</option>
-                        <option value="price_low" {% if sort_by=='price_low' %}selected{% endif %}>Price: Low to High
-                        </option>
-                        <option value="price_high" {% if sort_by=='price_high' %}selected{% endif %}>Price: High to Low
-                        </option>
-                        <option value="newest" {% if sort_by=='newest' %}selected{% endif %}>Newest First</option>
-                        <option value="stock_low" {% if sort_by=='stock_low' %}selected{% endif %}>Stock: Low to High
-                        </option>
+                        <option value="title" {% if sort_by == 'title' %}selected{% endif %}>Title (A-Z)</option>
+                        <option value="price_low" {% if sort_by == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="price_high" {% if sort_by == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                        <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Newest First</option>
+                        <option value="stock_low" {% if sort_by == 'stock_low' %}selected{% endif %}>Stock: Low to High</option>
                     </select>
                 </div>
 
@@ -304,8 +295,7 @@
                         {% for product in products %}
                         <tr>
                             <td>
-                                <img src="{{ product.cover_image.url }}" alt="{{ product.title }}"
-                                    class="product-image">
+                                <img src="{{ product.cover_image.url }}" alt="{{ product.title }}" class="product-image">
                             </td>
                             <td>{{ product.title }}</td>
                             <td>{{ product.category.name }}</td>
@@ -357,28 +347,23 @@
                 <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method="POST" action="{% url 'admin_side:add_product' %}" enctype="multipart/form-data"
-                class="needs-validation" novalidate>
+            <form method="POST" action="{% url 'admin_side:add_product' %}" enctype="multipart/form-data" class="needs-validation" novalidate>
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="title" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="title" name="title" required minlength="3"
-                                maxlength="200" value="{{ form.title.value|default:'' }}">
+                            <input type="text" class="form-control" id="title" name="title" required minlength="3" maxlength="200" value="{{ form.title.value|default:'' }}">
                             <div class="invalid-feedback">Please enter a valid title (3-200 characters)</div>
                         </div>
                         <div class="col-md-6">
                             <label for="author" class="form-label">Author</label>
-                            <input type="text" class="form-control" id="author" name="author" required minlength="2"
-                                maxlength="100" value="{{ form.author.value|default:'' }}">
+                            <input type="text" class="form-control" id="author" name="author" required minlength="2" maxlength="100" value="{{ form.author.value|default:'' }}">
                             <div class="invalid-feedback">Please enter a valid author name</div>
                         </div>
                         <div class="col-md-6">
                             <label for="isbn" class="form-label">ISBN</label>
-                            <input type="text" class="form-control" id="isbn" name="isbn" required
-                                pattern="^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$"
-                                value="{{ form.isbn.value|default:'' }}">
+                            <input type="text" class="form-control" id="isbn" name="isbn" required pattern="^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$" value="{{ form.isbn.value|default:'' }}">
                             <div class="invalid-feedback">Please enter a valid ISBN (10 or 13 digits)</div>
                         </div>
                         <div class="col-md-6">
@@ -386,84 +371,69 @@
                             <select class="form-select" id="category" name="category" required>
                                 <option value="">Select category...</option>
                                 {% for category in categories %}
-                                <option value="{{ category.id }}" {% if form.category.value==category.id %}selected{%
-                                    endif %}>{{ category.name }}</option>
+                                <option value="{{ category.id }}" {% if form.category.value == category.id %}selected{% endif %}>{{ category.name }}</option>
                                 {% endfor %}
                             </select>
                             <div class="invalid-feedback">Please select a category</div>
                         </div>
                         <div class="col-md-6">
                             <label for="price" class="form-label">Price</label>
-                            <input type="number" class="form-control" id="price" name="price" step="0.01" min="0"
-                                required value="{{ form.price.value|default:'' }}">
+                            <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required value="{{ form.price.value|default:'' }}">
                             <div class="invalid-feedback">Please enter a valid price (greater than 0)</div>
                         </div>
                         <div class="col-md-6">
                             <label for="discount_price" class="form-label">Discount Price (Optional)</label>
-                            <input type="number" class="form-control" id="discount_price" name="discount_price"
-                                step="0.01" min="0" value="{{ form.discount_price.value|default:'' }}">
+                            <input type="number" class="form-control" id="discount_price" name="discount_price" step="0.01" min="0" value="{{ form.discount_price.value|default:'' }}">
                             <div class="invalid-feedback">Discount price must be less than regular price</div>
                         </div>
                         <div class="col-md-6">
                             <label for="stock" class="form-label">Stock</label>
-                            <input type="number" class="form-control" id="stock" name="stock" min="0" required
-                                value="{{ form.stock.value|default:'' }}">
+                            <input type="number" class="form-control" id="stock" name="stock" min="0" required value="{{ form.stock.value|default:'' }}">
                             <div class="invalid-feedback">Please enter a valid stock quantity (0 or more)</div>
                         </div>
                         <div class="col-md-6">
                             <label for="language" class="form-label">Language</label>
                             <select class="form-select" id="language" name="language" required>
-                                <option value="EN" {% if form.language.value=='EN' %}selected{% endif %}>English
-                                </option>
-                                <option value="HI" {% if form.language.value=='HI' %}selected{% endif %}>Hindi</option>
-                                <option value="ML" {% if form.language.value=='ML' %}selected{% endif %}>Malayalam
-                                </option>
+                                <option value="EN" {% if form.language.value == 'EN' %}selected{% endif %}>English</option>
+                                <option value="HI" {% if form.language.value == 'HI' %}selected{% endif %}>Hindi</option>
+                                <option value="ML" {% if form.language.value == 'ML' %}selected{% endif %}>Malayalam</option>
                             </select>
                             <div class="invalid-feedback">Please select a language</div>
                         </div>
                         <div class="col-md-6">
                             <label for="publish_year" class="form-label">Publish Year</label>
-                            <input type="number" class="form-control" id="publish_year" name="publish_year" required
-                                min="1800" max="{{ current_year }}" value="{{ form.publish_year.value|default:'' }}">
+                            <input type="number" class="form-control" id="publish_year" name="publish_year" required min="1800" max="{{ current_year }}" value="{{ form.publish_year.value|default:'' }}">
                             <div class="invalid-feedback">Please enter a valid year (1800-present)</div>
                         </div>
                         <div class="col-md-6">
                             <label for="page_count" class="form-label">Page Count</label>
-                            <input type="number" class="form-control" id="page_count" name="page_count" min="1" required
-                                value="{{ form.page_count.value|default:'' }}">
+                            <input type="number" class="form-control" id="page_count" name="page_count" min="1" required value="{{ form.page_count.value|default:'' }}">
                             <div class="invalid-feedback">Please enter a valid page count (greater than 0)</div>
                         </div>
                         <div class="col-md-6">
                             <label for="status" class="form-label">Status</label>
                             <select class="form-select" id="status" name="status" required>
-                                <option value="active" {% if form.status.value=='active' %}selected{% endif %}>Active
-                                </option>
-                                <option value="inactive" {% if form.status.value=='inactive' %}selected{% endif %}>
-                                    Inactive</option>
-                                <option value="out_of_stock" {% if form.status.value=='out_of_stock' %}selected{% endif
-                                    %}>Out of Stock</option>
-                                <option value="coming_soon" {% if form.status.value=='coming_soon' %}selected{% endif
-                                    %}>Coming Soon</option>
+                                <option value="active" {% if form.status.value == 'active' %}selected{% endif %}>Active</option>
+                                <option value="inactive" {% if form.status.value == 'inactive' %}selected{% endif %}>Inactive</option>
+                                <option value="out_of_stock" {% if form.status.value == 'out_of_stock' %}selected{% endif %}>Out of Stock</option>
+                                <option value="coming_soon" {% if form.status.value == 'coming_soon' %}selected{% endif %}>Coming Soon</option>
                             </select>
                             <div class="invalid-feedback">Please select a status</div>
                         </div>
                         <div class="col-12">
                             <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3" required
-                                minlength="10">{{ form.description.value|default:'' }}</textarea>
+                            <textarea class="form-control" id="description" name="description" rows="3" required minlength="10">{{ form.description.value|default:'' }}</textarea>
                             <div class="invalid-feedback">Please enter a description (minimum 10 characters)</div>
                         </div>
                         <div class="col-md-6">
                             <label for="cover_image" class="form-label">Cover Image</label>
-                            <input type="file" class="form-control" id="cover_image" name="cover_image" accept="image/*"
-                                required {% if not form.instance.pk %}required{% endif %}>
+                            <input type="file" class="form-control" id="cover_image" name="cover_image" accept="image/*" required {% if not form.instance.pk %}required{% endif %}>
                             <div class="invalid-feedback">Please select a cover image</div>
                             <div id="coverPreview" class="image-preview"></div>
                         </div>
                         <div class="col-md-6">
                             <label for="additional_images" class="form-label">Additional Images (Optional)</label>
-                            <input type="file" class="form-control" id="additional_images" name="additional_images"
-                                accept="image/*" multiple>
+                            <input type="file" class="form-control" id="additional_images" name="additional_images" accept="image/*" multiple>
                             <div id="additionalPreview" class="preview-container"></div>
                         </div>
                     </div>
@@ -536,7 +506,7 @@
     }
 
     // Initialize DataTable
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#productsTable').DataTable({
             "order": [[1, "asc"]],
             "pageLength": 25,
@@ -546,16 +516,16 @@
         });
 
         // Image preview listeners
-        document.getElementById('cover_image').addEventListener('change', function () {
+        document.getElementById('cover_image').addEventListener('change', function() {
             previewImage(this, 'coverPreview');
         });
 
-        document.getElementById('additional_images').addEventListener('change', function () {
+        document.getElementById('additional_images').addEventListener('change', function() {
             previewImage(this, 'additionalPreview', true);
         });
 
         // Price validation
-        document.getElementById('discount_price').addEventListener('input', function () {
+        document.getElementById('discount_price').addEventListener('input', function() {
             const price = parseFloat(document.getElementById('price').value);
             const discount = parseFloat(this.value);
             if (discount >= price) {
@@ -567,13 +537,13 @@
 
         // Display messages using toastr
         {% if messages %}
-        {% for message in messages %}
-        {% if message.tags == 'success' %}
-        toastr.success('{{ message }}');
-        {% elif message.tags == 'error' %}
-        toastr.error('{{ message }}');
-        {% endif %}
-        {% endfor %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    toastr.success('{{ message }}');
+                {% elif message.tags == 'error' %}
+                    toastr.error('{{ message }}');
+                {% endif %}
+            {% endfor %}
         {% endif %}
     });
 
@@ -589,7 +559,7 @@
                 headers: {
                     'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
                 },
-                success: function (response) {
+                success: function(response) {
                     if (response.success) {
                         toastr.success(response.message);
                         // Reload the page after successful deletion
@@ -600,13 +570,13 @@
                         toastr.error(response.message);
                     }
                 },
-                error: function () {
+                error: function() {
                     toastr.error('An error occurred while deleting the product');
                 }
             });
         }
     }
-
+    
     function resetFilters() {
         const form = document.getElementById('filterForm');
         const inputs = form.querySelectorAll('input, select');
