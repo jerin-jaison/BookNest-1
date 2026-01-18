@@ -204,7 +204,7 @@ python manage.py runserver
 
 ### 7. Access the Application
 - **Main Site**: http://localhost:8000/
-- **Admin Panel**: http://localhost:8000/admin_side/
+- **Admin Panel**: http://localhost:8000/admin_side/admin_login
 
 ---
 

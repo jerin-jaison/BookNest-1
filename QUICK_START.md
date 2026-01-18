@@ -92,7 +92,7 @@ python manage.py runserver
 ### 5. Access Application
 
 - **Main Site**: http://localhost:8000/
-- **Admin Panel**: http://localhost:8000/admin/
+- **Admin Panel**: http://localhost:8000/admin_side/admin_login
 
 ---
 
@@ -175,7 +175,7 @@ BookNest-1/
 
 ## Next Steps After Installation
 
-1. ✅ Login to admin panel (`/admin`)
+1. ✅ Login to admin panel (`/admin_side/admin_login`)
 2. ✅ Add book categories
 3. ✅ Add products (books)
 4. ✅ Test user registration

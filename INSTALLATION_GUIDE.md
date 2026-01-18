@@ -318,7 +318,7 @@ Quit the server with CTRL-BREAK.
 
 Open your browser and navigate to:
 - **Main Site**: [http://localhost:8000/](http://localhost:8000/)
-- **Admin Panel**: [http://localhost:8000/admin/](http://localhost:8000/admin/)
+- **Admin Panel**: [http://localhost:8000/admin_side/admin_login](http://localhost:8000/admin_side/admin_login)
 
 ---
 
@@ -326,7 +326,7 @@ Open your browser and navigate to:
 
 ### Step 1: Access Admin Panel
 
-1. Go to [http://localhost:8000/admin/](http://localhost:8000/admin/)
+1. Go to [http://localhost:8000/admin_side/admin_login](http://localhost:8000/admin_side/admin_login)
 2. Login with the superuser credentials you created
 
 ### Step 2: Add Categories
